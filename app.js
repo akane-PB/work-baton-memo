@@ -1,4 +1,5 @@
 const STORAGE_KEY = "work-baton-memo:v1";
+const CLOUD_CONFIG_KEY = "work-baton-memo:cloud-config:v1";
 
 const defaultItem = {
   projectName: "ワークルームPB2 TVCM",
@@ -24,6 +25,14 @@ const els = {
   visibleCount: document.querySelector("#visibleCount"),
   statusFilter: document.querySelector("#statusFilter"),
   newItemButton: document.querySelector("#newItemButton"),
+  cloudStatus: document.querySelector("#cloudStatus"),
+  loadCloudButton: document.querySelector("#loadCloudButton"),
+  saveCloudButton: document.querySelector("#saveCloudButton"),
+  syncSettings: document.querySelector("#syncSettings"),
+  clearSettingsButton: document.querySelector("#clearSettingsButton"),
+  saveSettingsButton: document.querySelector("#saveSettingsButton"),
+  scriptUrl: document.querySelector("#scriptUrl"),
+  sharedSecret: document.querySelector("#sharedSecret"),
   itemList: document.querySelector("#itemList"),
   emptyList: document.querySelector("#emptyList"),
   editorEmpty: document.querySelector("#editorEmpty"),
@@ -91,6 +100,26 @@ function loadStore() {
 
 function saveStore() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
+}
+
+function loadCloudConfig() {
+  try {
+    const config = JSON.parse(localStorage.getItem(CLOUD_CONFIG_KEY));
+    return {
+      scriptUrl: config?.scriptUrl || "",
+      sharedSecret: config?.sharedSecret || "",
+    };
+  } catch {
+    return { scriptUrl: "", sharedSecret: "" };
+  }
+}
+
+function saveCloudConfig(config) {
+  localStorage.setItem(CLOUD_CONFIG_KEY, JSON.stringify(config));
+}
+
+function clearCloudConfig() {
+  localStorage.removeItem(CLOUD_CONFIG_KEY);
 }
 
 function getCurrentItem() {
@@ -182,6 +211,16 @@ function render() {
   renderSummary();
   renderList();
   renderEditor();
+  renderCloudStatus();
+}
+
+function renderCloudStatus(message) {
+  const config = loadCloudConfig();
+  if (message) {
+    els.cloudStatus.textContent = message;
+    return;
+  }
+  els.cloudStatus.textContent = config.scriptUrl ? "共有設定済み" : "端末内保存";
 }
 
 function createNewItem() {
@@ -244,7 +283,141 @@ function selectItem(itemId) {
   render();
 }
 
+function getCloudConfigOrOpenSettings() {
+  const config = loadCloudConfig();
+  if (config.scriptUrl && config.sharedSecret) return config;
+  const inlineConfig = {
+    scriptUrl: els.scriptUrl.value.trim(),
+    sharedSecret: els.sharedSecret.value.trim(),
+  };
+  if (inlineConfig.scriptUrl && inlineConfig.sharedSecret) {
+    saveCloudConfig(inlineConfig);
+    return inlineConfig;
+  }
+
+  els.syncSettings.open = true;
+  renderCloudStatus("共有設定が必要");
+  return null;
+}
+
+function makeCloudPayload() {
+  return {
+    version: 1,
+    savedAt: nowIso(),
+    store,
+  };
+}
+
+function applyCloudStore(nextStore) {
+  if (!nextStore || !Array.isArray(nextStore.items)) {
+    throw new Error("共有データの形式が正しくありません。");
+  }
+
+  const items = nextStore.items.map(normalizeItem);
+  store = {
+    currentItemId: items.some((item) => item.id === nextStore.currentItemId)
+      ? nextStore.currentItemId
+      : items[0]?.id || "",
+    items,
+  };
+  saveStore();
+  render();
+}
+
+async function loadFromCloud() {
+  const config = getCloudConfigOrOpenSettings();
+  if (!config) return;
+
+  try {
+    renderCloudStatus("共有読込中");
+    const url = new URL(config.scriptUrl);
+    url.searchParams.set("action", "load");
+    url.searchParams.set("secret", config.sharedSecret);
+    const response = await fetch(url.toString(), { method: "GET", cache: "no-store" });
+    const result = await response.json();
+    if (!response.ok || !result.ok) {
+      throw new Error(result.error || "共有読込に失敗しました。");
+    }
+
+    if (store.items.length > 0 && !window.confirm("共有データでこの端末の内容を置き換えますか？")) {
+      renderCloudStatus();
+      return;
+    }
+
+    applyCloudStore(result.data?.store || result.store);
+    renderCloudStatus("共有読込済み");
+  } catch (error) {
+    renderCloudStatus("読込失敗");
+    window.alert(error.message || "共有読込に失敗しました。");
+  }
+}
+
+async function saveToCloud() {
+  const config = getCloudConfigOrOpenSettings();
+  if (!config) return;
+
+  try {
+    renderCloudStatus("共有保存中");
+    const response = await fetch(config.scriptUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "text/plain;charset=utf-8",
+      },
+      body: JSON.stringify({
+        action: "save",
+        secret: config.sharedSecret,
+        data: makeCloudPayload(),
+      }),
+    });
+    const result = await response.json();
+    if (!response.ok || !result.ok) {
+      throw new Error(result.error || "共有保存に失敗しました。");
+    }
+
+    renderCloudStatus("共有保存済み");
+  } catch (error) {
+    renderCloudStatus("保存失敗");
+    window.alert(error.message || "共有保存に失敗しました。");
+  }
+}
+
+function restoreSettingsFields() {
+  const config = loadCloudConfig();
+  els.scriptUrl.value = config.scriptUrl;
+  els.sharedSecret.value = config.sharedSecret;
+}
+
+function handleSaveSettings() {
+  const config = {
+    scriptUrl: els.scriptUrl.value.trim(),
+    sharedSecret: els.sharedSecret.value.trim(),
+  };
+
+  if (!config.scriptUrl || !config.sharedSecret) {
+    renderCloudStatus("設定未入力");
+    window.alert("Apps Script URLと共有パスワードを入力してください。");
+    return;
+  }
+
+  saveCloudConfig(config);
+  els.syncSettings.open = false;
+  renderCloudStatus("共有設定済み");
+}
+
+function handleClearSettings() {
+  if (!window.confirm("共有設定をこの端末から削除しますか？")) return;
+  clearCloudConfig();
+  els.scriptUrl.value = "";
+  els.sharedSecret.value = "";
+  els.syncSettings.open = false;
+  renderCloudStatus();
+}
+
 els.newItemButton.addEventListener("click", createNewItem);
+els.loadCloudButton.addEventListener("click", loadFromCloud);
+els.saveCloudButton.addEventListener("click", saveToCloud);
+els.saveSettingsButton.addEventListener("click", handleSaveSettings);
+els.clearSettingsButton.addEventListener("click", handleClearSettings);
 els.deleteItemButton.addEventListener("click", deleteCurrentItem);
 els.statusFilter.addEventListener("change", render);
 
@@ -258,5 +431,6 @@ els.editorForm.addEventListener("input", updateCurrentItemFromForm);
 els.editorForm.addEventListener("change", updateCurrentItemFromForm);
 
 store = loadStore();
+restoreSettingsFields();
 saveStore();
 render();

@@ -26,6 +26,28 @@
                 <option value="完了">完了</option>
               </select>
             </label>
+            <div class="sync-actions" aria-label="共有データ操作">
+              <span id="cloudStatus">端末内保存</span>
+              <button id="loadCloudButton" type="button">共有読込</button>
+              <button id="saveCloudButton" type="button">共有保存</button>
+              <details id="syncSettings" class="sync-settings">
+                <summary>設定</summary>
+                <div class="settings-fields">
+                  <label>
+                    <span>Apps Script URL</span>
+                    <input id="scriptUrl" type="url" placeholder="https://script.google.com/macros/s/..." />
+                  </label>
+                  <label>
+                    <span>共有パスワード</span>
+                    <input id="sharedSecret" type="password" autocomplete="off" />
+                  </label>
+                  <div class="settings-actions">
+                    <button id="clearSettingsButton" class="danger-button" type="button">設定を削除</button>
+                    <button id="saveSettingsButton" type="button">設定を保存</button>
+                  </div>
+                </div>
+              </details>
+            </div>
             <button id="newItemButton" type="button">新規案件</button>
           </div>
         </div>

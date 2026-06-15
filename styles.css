@@ -136,6 +136,26 @@ h2 {
   width: 150px;
 }
 
+.sync-actions {
+  display: flex;
+  align-items: end;
+  gap: 6px;
+}
+
+.sync-actions span {
+  display: inline-flex;
+  min-height: 38px;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #fbfcfb;
+  color: var(--muted);
+  padding: 8px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
 label {
   display: grid;
   min-width: 0;
@@ -183,6 +203,10 @@ button {
   padding: 8px 13px;
   cursor: pointer;
   white-space: nowrap;
+}
+
+summary {
+  cursor: pointer;
 }
 
 button:hover {
@@ -365,6 +389,52 @@ button:hover {
   text-align: left;
 }
 
+.sync-settings {
+  position: relative;
+}
+
+.sync-settings summary {
+  min-height: 38px;
+  list-style: none;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--panel-soft);
+  color: var(--ink);
+  padding: 8px 13px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.sync-settings summary::-webkit-details-marker {
+  display: none;
+}
+
+.settings-fields {
+  position: absolute;
+  z-index: 10;
+  top: calc(100% + 8px);
+  right: 0;
+  width: min(520px, calc(100vw - 24px));
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel);
+  color: var(--ink);
+  box-shadow: var(--shadow);
+  display: grid;
+  gap: 14px;
+  padding: 16px;
+}
+
+.sync-settings:not([open]) .settings-fields {
+  display: none;
+}
+
+.settings-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
 @media (max-width: 1040px) {
   .topbar,
   .workspace {
@@ -396,6 +466,30 @@ button:hover {
   .quick-actions {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .sync-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .sync-settings {
+    grid-column: 1 / -1;
+  }
+
+  .sync-settings summary {
+    text-align: center;
+  }
+
+  .settings-fields {
+    left: 0;
+    right: 0;
+    width: 100%;
+  }
+
+  .sync-actions span {
+    grid-column: 1 / -1;
+    justify-content: center;
   }
 
   .quick-actions label,
