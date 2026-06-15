@@ -36,19 +36,18 @@ textarea {
 .app-shell {
   width: min(1420px, 100%);
   margin: 0 auto;
-  padding: 20px;
+  padding: 12px;
 }
 
 .topbar {
   display: grid;
-  grid-template-columns: minmax(250px, 0.62fr) minmax(620px, 1.38fr);
-  gap: 14px;
-  margin-bottom: 14px;
+  grid-template-columns: minmax(360px, 0.92fr) minmax(540px, 1.08fr);
+  gap: 10px;
+  margin-bottom: 10px;
 }
 
 .brand-block,
 .summary-card,
-.toolbar,
 .list-panel,
 .editor-panel {
   background: var(--panel);
@@ -58,11 +57,15 @@ textarea {
 }
 
 .brand-block {
-  padding: 20px 22px;
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) auto;
+  gap: 14px;
+  align-items: end;
+  padding: 14px 16px;
 }
 
 .eyebrow {
-  margin: 0 0 8px;
+  margin: 0 0 5px;
   color: var(--green);
   font-size: 12px;
   font-weight: 700;
@@ -75,7 +78,7 @@ h2 {
 }
 
 h1 {
-  font-size: 29px;
+  font-size: 26px;
   line-height: 1.22;
 }
 
@@ -85,26 +88,32 @@ h2 {
 
 .summary-bar {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(6, minmax(76px, 104px));
+  gap: 6px;
+  align-content: start;
+  justify-content: end;
 }
 
 .summary-card {
-  min-height: 96px;
-  padding: 16px 18px;
+  min-height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 6px 8px;
 }
 
 .summary-card span {
   display: block;
-  margin-bottom: 10px;
+  margin-bottom: 0;
   color: var(--muted);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
 }
 
 .summary-card strong {
   display: block;
-  font-size: 30px;
+  font-size: 18px;
   line-height: 1.1;
 }
 
@@ -117,13 +126,14 @@ h2 {
   color: #d9ebe2;
 }
 
-.toolbar {
+.quick-actions {
   display: flex;
   align-items: end;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-bottom: 14px;
-  padding: 14px;
+  gap: 8px;
+}
+
+.quick-actions label {
+  width: 150px;
 }
 
 label {
@@ -140,7 +150,7 @@ select,
 textarea {
   width: 100%;
   min-width: 0;
-  min-height: 42px;
+  min-height: 38px;
   border: 1px solid var(--line);
   border-radius: 6px;
   background: #fbfcfb;
@@ -165,7 +175,7 @@ input[readonly] {
 }
 
 button {
-  min-height: 40px;
+  min-height: 38px;
   border: 1px solid var(--line);
   border-radius: 6px;
   background: var(--panel-soft);
@@ -177,6 +187,10 @@ button {
 
 button:hover {
   border-color: var(--green);
+}
+
+[hidden] {
+  display: none !important;
 }
 
 .danger-button {
@@ -344,8 +358,11 @@ button:hover {
 }
 
 .editor-empty {
-  min-height: 220px;
-  align-content: center;
+  min-height: 0;
+  margin-bottom: 14px;
+  padding: 14px 16px;
+  align-content: start;
+  text-align: left;
 }
 
 @media (max-width: 1040px) {
@@ -355,7 +372,7 @@ button:hover {
   }
 
   .summary-bar {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
@@ -364,17 +381,25 @@ button:hover {
     padding: 12px;
   }
 
-  .summary-bar,
+  .summary-bar {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .field-grid {
     grid-template-columns: 1fr;
   }
 
-  .toolbar {
+  .brand-block {
+    grid-template-columns: 1fr;
+  }
+
+  .quick-actions {
     align-items: stretch;
     flex-direction: column;
   }
 
-  .toolbar button {
+  .quick-actions label,
+  .quick-actions button {
     width: 100%;
   }
 

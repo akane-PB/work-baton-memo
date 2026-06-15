@@ -19,10 +19,11 @@ const els = {
   activeCount: document.querySelector("#activeCount"),
   reviewCount: document.querySelector("#reviewCount"),
   readyCount: document.querySelector("#readyCount"),
+  holdCount: document.querySelector("#holdCount"),
+  doneCount: document.querySelector("#doneCount"),
   visibleCount: document.querySelector("#visibleCount"),
   statusFilter: document.querySelector("#statusFilter"),
   newItemButton: document.querySelector("#newItemButton"),
-  copyAllButton: document.querySelector("#copyAllButton"),
   itemList: document.querySelector("#itemList"),
   emptyList: document.querySelector("#emptyList"),
   editorEmpty: document.querySelector("#editorEmpty"),
@@ -130,6 +131,8 @@ function renderSummary() {
   els.activeCount.textContent = String(store.items.filter((item) => item.status === "作業中").length);
   els.reviewCount.textContent = String(store.items.filter((item) => item.status === "要確認").length);
   els.readyCount.textContent = String(store.items.filter((item) => item.status === "引き継ぎOK").length);
+  els.holdCount.textContent = String(store.items.filter((item) => item.status === "保留").length);
+  els.doneCount.textContent = String(store.items.filter((item) => item.status === "完了").length);
 }
 
 function renderList() {
@@ -241,43 +244,7 @@ function selectItem(itemId) {
   render();
 }
 
-function makeHandoffText() {
-  const lines = [
-    "作業バトンメモ",
-    `作成日時\t${formatDateTime(nowIso())}`,
-    "",
-    "案件名\tステータス\t最新版端末\t同期状態\t最終更新\t次にやること\t作業メモ",
-    ...store.items.map((item) => [
-      item.projectName,
-      item.status,
-      item.latestDevice,
-      item.syncState,
-      formatDateTime(item.updatedAt),
-      item.nextAction,
-      item.workMemo,
-    ].map((value) => String(value || "").replace(/\s+/g, " ").trim()).join("\t")),
-  ];
-
-  return lines.join("\n");
-}
-
-async function copyHandoffText() {
-  const text = makeHandoffText();
-
-  try {
-    await navigator.clipboard.writeText(text);
-    els.copyAllButton.textContent = "コピーしました";
-  } catch {
-    window.prompt("下記をコピーしてください", text);
-  }
-
-  window.setTimeout(() => {
-    els.copyAllButton.textContent = "引き継ぎメモをコピー";
-  }, 1400);
-}
-
 els.newItemButton.addEventListener("click", createNewItem);
-els.copyAllButton.addEventListener("click", copyHandoffText);
 els.deleteItemButton.addEventListener("click", deleteCurrentItem);
 els.statusFilter.addEventListener("change", render);
 

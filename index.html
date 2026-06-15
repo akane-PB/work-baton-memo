@@ -10,8 +10,24 @@
     <main class="app-shell">
       <section class="topbar" aria-label="アプリ概要">
         <div class="brand-block">
-          <p class="eyebrow">Work Baton Memo</p>
-          <h1>作業バトンメモ</h1>
+          <div>
+            <p class="eyebrow">Work Baton Memo</p>
+            <h1>作業バトンメモ</h1>
+          </div>
+          <div class="quick-actions" aria-label="案件操作">
+            <label>
+              <span>ステータス</span>
+              <select id="statusFilter">
+                <option value="all">すべて</option>
+                <option value="作業中">作業中</option>
+                <option value="引き継ぎOK">引き継ぎOK</option>
+                <option value="要確認">要確認</option>
+                <option value="保留">保留</option>
+                <option value="完了">完了</option>
+              </select>
+            </label>
+            <button id="newItemButton" type="button">新規案件</button>
+          </div>
         </div>
         <div class="summary-bar" aria-label="作業状況サマリー">
           <article class="summary-card summary-primary">
@@ -30,23 +46,15 @@
             <span>引き継ぎOK</span>
             <strong id="readyCount">0</strong>
           </article>
+          <article class="summary-card">
+            <span>保留</span>
+            <strong id="holdCount">0</strong>
+          </article>
+          <article class="summary-card">
+            <span>完了</span>
+            <strong id="doneCount">0</strong>
+          </article>
         </div>
-      </section>
-
-      <section class="toolbar" aria-label="案件操作">
-        <label>
-          <span>ステータス</span>
-          <select id="statusFilter">
-            <option value="all">すべて</option>
-            <option value="作業中">作業中</option>
-            <option value="引き継ぎOK">引き継ぎOK</option>
-            <option value="要確認">要確認</option>
-            <option value="保留">保留</option>
-            <option value="完了">完了</option>
-          </select>
-        </label>
-        <button id="newItemButton" type="button">新規案件</button>
-        <button id="copyAllButton" type="button">引き継ぎメモをコピー</button>
       </section>
 
       <section class="workspace">
@@ -128,6 +136,7 @@
         </section>
       </section>
     </main>
+
     <script src="./app.js"></script>
   </body>
 </html>
