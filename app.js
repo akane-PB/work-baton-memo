@@ -30,6 +30,7 @@ const els = {
   saveCloudButton: document.querySelector("#saveCloudButton"),
   syncSettings: document.querySelector("#syncSettings"),
   clearSettingsButton: document.querySelector("#clearSettingsButton"),
+  closeSettingsButton: document.querySelector("#closeSettingsButton"),
   saveSettingsButton: document.querySelector("#saveSettingsButton"),
   scriptUrl: document.querySelector("#scriptUrl"),
   sharedSecret: document.querySelector("#sharedSecret"),
@@ -345,6 +346,7 @@ async function loadFromCloud() {
     }
 
     applyCloudStore(result.data?.store || result.store);
+    closeSettings();
     renderCloudStatus("共有読込済み");
   } catch (error) {
     renderCloudStatus("読込失敗");
@@ -374,6 +376,7 @@ async function saveToCloud() {
       throw new Error(result.error || "共有保存に失敗しました。");
     }
 
+    closeSettings();
     renderCloudStatus("共有保存済み");
   } catch (error) {
     renderCloudStatus("保存失敗");
@@ -385,6 +388,11 @@ function restoreSettingsFields() {
   const config = loadCloudConfig();
   els.scriptUrl.value = config.scriptUrl;
   els.sharedSecret.value = config.sharedSecret;
+}
+
+function closeSettings() {
+  els.syncSettings.open = false;
+  els.syncSettings.removeAttribute("open");
 }
 
 function handleSaveSettings() {
@@ -400,7 +408,7 @@ function handleSaveSettings() {
   }
 
   saveCloudConfig(config);
-  els.syncSettings.open = false;
+  closeSettings();
   renderCloudStatus("共有設定済み");
 }
 
@@ -409,13 +417,14 @@ function handleClearSettings() {
   clearCloudConfig();
   els.scriptUrl.value = "";
   els.sharedSecret.value = "";
-  els.syncSettings.open = false;
+  closeSettings();
   renderCloudStatus();
 }
 
 els.newItemButton.addEventListener("click", createNewItem);
 els.loadCloudButton.addEventListener("click", loadFromCloud);
 els.saveCloudButton.addEventListener("click", saveToCloud);
+els.closeSettingsButton.addEventListener("click", closeSettings);
 els.saveSettingsButton.addEventListener("click", handleSaveSettings);
 els.clearSettingsButton.addEventListener("click", handleClearSettings);
 els.deleteItemButton.addEventListener("click", deleteCurrentItem);
