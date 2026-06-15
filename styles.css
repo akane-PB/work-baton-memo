@@ -286,6 +286,11 @@ button:hover {
   color: #94570f;
 }
 
+.badge.status-保留 {
+  background: #f1eef8;
+  color: #624d85;
+}
+
 .badge.status-完了 {
   background: #e9eef6;
   color: #315b82;
