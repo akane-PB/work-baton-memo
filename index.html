@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>作業バトンメモ</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="topbar" aria-label="アプリ概要">
+        <div class="brand-block">
+          <p class="eyebrow">Work Baton Memo</p>
+          <h1>作業バトンメモ</h1>
+        </div>
+        <div class="summary-bar" aria-label="作業状況サマリー">
+          <article class="summary-card summary-primary">
+            <span>案件数</span>
+            <strong id="totalCount">0</strong>
+          </article>
+          <article class="summary-card">
+            <span>作業中</span>
+            <strong id="activeCount">0</strong>
+          </article>
+          <article class="summary-card">
+            <span>要確認</span>
+            <strong id="reviewCount">0</strong>
+          </article>
+          <article class="summary-card">
+            <span>引き継ぎOK</span>
+            <strong id="readyCount">0</strong>
+          </article>
+        </div>
+      </section>
+
+      <section class="toolbar" aria-label="案件操作">
+        <label>
+          <span>ステータス</span>
+          <select id="statusFilter">
+            <option value="all">すべて</option>
+            <option value="作業中">作業中</option>
+            <option value="引き継ぎOK">引き継ぎOK</option>
+            <option value="要確認">要確認</option>
+            <option value="完了">完了</option>
+          </select>
+        </label>
+        <button id="newItemButton" type="button">新規案件</button>
+        <button id="copyAllButton" type="button">引き継ぎメモをコピー</button>
+      </section>
+
+      <section class="workspace">
+        <section class="list-panel" aria-label="案件一覧">
+          <div class="section-head">
+            <h2>案件一覧</h2>
+            <span id="visibleCount">0件</span>
+          </div>
+          <div id="itemList" class="item-list"></div>
+          <div id="emptyList" class="empty-state" hidden>
+            <strong>表示できる案件がありません</strong>
+            <span>新規案件を作るか、ステータスの絞り込みを変更してください。</span>
+          </div>
+        </section>
+
+        <section class="editor-panel" aria-label="案件編集">
+          <div id="editorEmpty" class="empty-state editor-empty" hidden>
+            <strong>案件を選択してください</strong>
+            <span>一覧から案件を選ぶか、新規案件を作成してください。</span>
+          </div>
+
+          <form id="editorForm" class="editor-form">
+            <div class="section-head">
+              <h2>作業メモ</h2>
+              <button id="deleteItemButton" class="danger-button" type="button">削除</button>
+            </div>
+
+            <label class="full-field">
+              <span>案件名</span>
+              <input id="projectName" type="text" autocomplete="off" />
+            </label>
+
+            <div class="field-grid">
+              <label>
+                <span>最新版端末</span>
+                <select id="latestDevice">
+                  <option value="iMac">iMac</option>
+                  <option value="MacBook Air">MacBook Air</option>
+                  <option value="iPhone">iPhone</option>
+                  <option value="iPad">iPad</option>
+                </select>
+              </label>
+              <label>
+                <span>ステータス</span>
+                <select id="status">
+                  <option value="作業中">作業中</option>
+                  <option value="引き継ぎOK">引き継ぎOK</option>
+                  <option value="要確認">要確認</option>
+                  <option value="完了">完了</option>
+                </select>
+              </label>
+              <label>
+                <span>同期状態</span>
+                <select id="syncState">
+                  <option value="未同期">未同期</option>
+                  <option value="GitHub Push済み">GitHub Push済み</option>
+                  <option value="Pull必要">Pull必要</option>
+                  <option value="Drive保存済み">Drive保存済み</option>
+                  <option value="確認中">確認中</option>
+                </select>
+              </label>
+              <label>
+                <span>最終更新</span>
+                <input id="updatedAt" type="text" readonly />
+              </label>
+            </div>
+
+            <label class="full-field">
+              <span>次にやること</span>
+              <textarea id="nextAction" rows="3"></textarea>
+            </label>
+
+            <label class="full-field">
+              <span>作業メモ</span>
+              <textarea id="workMemo" rows="8"></textarea>
+            </label>
+          </form>
+        </section>
+      </section>
+    </main>
+    <script src="./app.js"></script>
+  </body>
+</html>
