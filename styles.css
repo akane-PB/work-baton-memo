@@ -41,7 +41,7 @@ textarea {
 
 .topbar {
   display: grid;
-  grid-template-columns: minmax(360px, 0.92fr) minmax(540px, 1.08fr);
+  grid-template-columns: 1fr;
   gap: 10px;
   margin-bottom: 10px;
 }
@@ -91,7 +91,7 @@ h2 {
   grid-template-columns: repeat(6, minmax(76px, 104px));
   gap: 6px;
   align-content: start;
-  justify-content: end;
+  justify-content: start;
 }
 
 .summary-card {
@@ -129,6 +129,7 @@ h2 {
 .quick-actions {
   display: flex;
   align-items: end;
+  flex-wrap: wrap;
   gap: 8px;
 }
 
